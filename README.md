@@ -31,4 +31,4 @@ Xóa sản phẩm:
 
 Note file database: 
 Username: bao
-Password: 123456
+Password: 123456# Initial commit
