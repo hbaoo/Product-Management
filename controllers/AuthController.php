@@ -17,6 +17,25 @@ class AuthController {
         include 'views/auth/login.php';
     }
 
+    public function handleRequest() {
+        $action = isset($_GET['action']) ? $_GET['action'] : 'login';
+        
+        switch ($action) {
+            case 'login':
+                $this->login();
+                break;
+            case 'logout':
+                $this->logout();
+                break;
+            case 'register':
+                $this->register();
+                break;
+            default:
+                header('Location: index.php');
+                break;
+        }
+    }
+
     public function login() {
         if ($this->userModel->loginUser()) {
             header('Location: index.php');
