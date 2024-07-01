@@ -1,103 +1,53 @@
 <?php
-require_once 'models/Product.php';
-
+require_once 'models/ProductModel.php';
 
 class ProductController {
+    private $productModel;
+
+    public function __construct() {
+        $this->productModel = new ProductModel();
+    }
+
     public function index() {
-        global $pdo; 
-        $stmt = $pdo->query("SELECT * FROM products");
-        $products = $stmt->fetchAll();
+        $products = $this->productModel->getAllProducts();
         include 'views/products/index.php';
     }
 
     public function create() {
-        global $pdo;
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $name = $_POST['name'];
-            $description = $_POST['description'];
-            $status = $_POST['status'];
-            $image = $_FILES['image']['name'];
-            $target = 'uploads/' . basename($image);
-
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
-                $stmt = $pdo->prepare("INSERT INTO products (name, description, status, image) VALUES (?, ?, ?, ?)");
-                $stmt->execute([$name, $description, $status, $image]);
+            if ($this->productModel->createProduct()) {
                 header('Location: index.php');
                 exit;
+            } else {
+                $error = "Failed to create product";
+                include 'views/products/create.php';
             }
+        } else {
+            include 'views/products/create.php';
         }
-        include 'views/products/create.php';
     }
 
     public function edit($id) {
-        global $pdo;
-    
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $name = $_POST['name'];
-            $description = $_POST['description'];
-            $status = isset($_POST['status']) ? 1 : 0; 
-    
-            $stmt = $pdo->prepare("SELECT image FROM products WHERE id = ?");
-            $stmt->execute([$id]);
-            $product = $stmt->fetch();
-            $oldImage = $product['image'];
-    
-            if (!empty($_FILES['image']['name'])) {
-                $newImageName = uniqid() . '_' . $_FILES['image']['name'];
-                $target = 'uploads/' . $newImageName;
-    
-                if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
-                    $stmt = $pdo->prepare("UPDATE products SET name = ?, description = ?, status = ?, image = ? WHERE id = ?");
-                    $stmt->execute([$name, $description, $status, $newImageName, $id]);
-    
-                    if (!empty($oldImage) && file_exists('uploads/' . $oldImage)) {
-                        unlink('uploads/' . $oldImage);
-                    }
-                }
+            if ($this->productModel->updateProduct($id)) {
+                header('Location: index.php');
+                exit;
             } else {
-                $stmt = $pdo->prepare("UPDATE products SET name = ?, description = ?, status = ? WHERE id = ?");
-                $stmt->execute([$name, $description, $status, $id]);
+                $error = "Failed to update product";
+                $product = $this->productModel->getProductById($id);
+                include 'views/products/edit.php';
             }
-    
-            header('Location: index.php');
-            exit;
         } else {
-            $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
-            $stmt->execute([$id]);
-            $product = $stmt->fetch();
+            $product = $this->productModel->getProductById($id);
             include 'views/products/edit.php';
         }
     }
-    
-    
-    
-    
-    
+
     public function delete($id) {
-        global $pdo; 
-        
-        $stmt = $pdo->prepare("SELECT image FROM products WHERE id = ?");
-        $stmt->execute([$id]);
-        $product = $stmt->fetch();
-    
-        if ($product) {
-            $imagePath = 'uploads/' . $product['image'];
-            
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
-            }
-    
-            $stmt = $pdo->prepare("DELETE FROM products WHERE id = ?");
-            $stmt->execute([$id]);
+        if ($this->productModel->deleteProduct($id)) {
+            header('Location: index.php');
+            exit;
         }
-    
-        header('Location: index.php');
-        exit;
-    }    
+    }
 }
 ?>
-
-<?php
-
-
-
