@@ -5,6 +5,11 @@ class ProductController {
     private $productModel;
 
     public function __construct() {
+        if (!$_SESSION['user_id']) {
+                header('Location: index.php?module=auth');
+            }
+            
+
         $this->productModel = new ProductModel();
     }
 

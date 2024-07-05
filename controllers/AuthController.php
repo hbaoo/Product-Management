@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'models/UserModel.php';
 
 class AuthController {
@@ -9,16 +8,8 @@ class AuthController {
         $this->userModel = new UserModel();
     }
 
-    public function showLoginForm() {
-        if (isset($_SESSION['success'])) {
-            $success = $_SESSION['success'];
-            unset($_SESSION['success']);
-        }
-        include 'views/auth/login.php';
-    }
-
     public function handleRequest() {
-        $action = isset($_GET['action']) ? $_GET['action'] : 'login';
+        $action = $_GET['action'] ?? '';
         
         switch ($action) {
             case 'login':
@@ -31,18 +22,32 @@ class AuthController {
                 $this->register();
                 break;
             default:
-                header('Location: index.php');
+                $this->showLoginForm();
                 break;
         }
     }
 
+    
+
+    public function showLoginForm() {
+        if (isset($_SESSION['success'])) {
+            $success = $_SESSION['success'];
+            unset($_SESSION['success']);
+        }
+        include 'views/auth/login.php';
+    }
+
     public function login() {
-        if ($this->userModel->loginUser()) {
-            header('Location: index.php');
-            exit;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->userModel->loginUser()) {
+                header('Location: index.php');
+                exit;
+            } else {
+                $error = "Invalid username or password";
+                include 'views/auth/login.php';
+            }
         } else {
-            $error = "Invalid username or password";
-            include 'views/auth/login.php';
+            header('Location: index.php?module=auth');
         }
     }
     public function register() {

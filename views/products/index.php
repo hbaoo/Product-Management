@@ -18,8 +18,8 @@
                     <td><?php echo $product['status'] ? 'Active' : 'Inactive'; ?></td>
                     <td><img src="uploads/<?php echo $product['image']; ?>" class="img-thumbnail w-50"></td>
                     <td>
-                        <a href="index.php?action=edit&id=<?php echo $product['id']; ?>" class="btn btn-primary btn-sm">Edit</a>
-                        <a href="index.php?action=delete&id=<?php echo $product['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
+                        <a href="index.php?module=product&action=edit&id=<?php echo $product['id']; ?>" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="index.php?module=product&action=delete&id=<?php echo $product['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
