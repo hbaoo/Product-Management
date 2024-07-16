@@ -7,7 +7,7 @@
     <?php if (isset($success)): ?>
         <div class="alert alert-success"><?php echo $success; ?></div>
     <?php endif; ?>
-    <form action="index.php?action=login" method="post">
+    <form action="index.php?module=auth&action=login" method="post">
     <div class="form-group">
             <label for="username">Username:</label>
             <input type="text" class="form-control" id="username" name="username" value="<?php echo isset($_POST['username']) ? $_POST['username'] : ''; ?>" required>
@@ -18,6 +18,6 @@
         </div>
         <button type="submit" class="btn btn-primary">Login</button>
     </form>
-    <p>Don't have an account? <a href="index.php?action=register">Register here</a></p>
+    <p>Don't have an account? <a href="index.php?module=auth&action=register">Register here</a></p>
 </div>
 <?php include 'views/layout/footer.php'; ?>

@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'models/UserModel.php';
 
 class AuthController {
@@ -8,6 +7,27 @@ class AuthController {
     public function __construct() {
         $this->userModel = new UserModel();
     }
+
+    public function handleRequest() {
+        $action = $_GET['action'] ?? '';
+        
+        switch ($action) {
+            case 'login':
+                $this->login();
+                break;
+            case 'logout':
+                $this->logout();
+                break;
+            case 'register':
+                $this->register();
+                break;
+            default:
+                $this->showLoginForm();
+                break;
+        }
+    }
+
+    
 
     public function showLoginForm() {
         if (isset($_SESSION['success'])) {
@@ -18,12 +38,16 @@ class AuthController {
     }
 
     public function login() {
-        if ($this->userModel->loginUser()) {
-            header('Location: index.php');
-            exit;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->userModel->loginUser()) {
+                header('Location: index.php');
+                exit;
+            } else {
+                $error = "Invalid username or password";
+                include 'views/auth/login.php';
+            }
         } else {
-            $error = "Invalid username or password";
-            include 'views/auth/login.php';
+            header('Location: index.php?module=auth');
         }
     }
     public function register() {

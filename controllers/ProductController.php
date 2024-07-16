@@ -5,6 +5,11 @@ class ProductController {
     private $productModel;
 
     public function __construct() {
+        if (!$_SESSION['user_id']) {
+                header('Location: index.php?module=auth');
+            }
+            
+
         $this->productModel = new ProductModel();
     }
 
@@ -12,6 +17,35 @@ class ProductController {
         $products = $this->productModel->getAllProducts();
         include 'views/products/index.php';
     }
+
+    public function handleRequest() {
+        $action = isset($_GET['action']) ? $_GET['action'] : 'index';
+        $id = isset($_GET['id']) ? $_GET['id'] : null;
+        
+        switch ($action) {
+            case 'create':
+                $this->create();
+                break;
+            case 'edit':
+                if ($id) {
+                    $this->edit($id);
+                } else {
+                    header('Location: index.php');
+                }
+                break;
+            case 'delete':
+                if ($id) {
+                    $this->delete($id);
+                } else {
+                    header('Location: index.php');
+                }
+                break;
+            default:
+                $this->index();
+                break;
+        }
+    }
+
 
     public function create() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {

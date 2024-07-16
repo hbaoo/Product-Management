@@ -15,17 +15,17 @@
                         <a class="nav-link" href="index.php">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?action=create">Add New Product</a>
+                        <a class="nav-link" href="index.php?module=auth&action=create">Add New Product</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?action=logout">Logout</a>
+                        <a class="nav-link" href="index.php?module=auth&action=logout">Logout</a>
                     </li>
                 <?php else: ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?action=login_index">Login</a>
+                        <a class="nav-link" href="index.php?module=auth">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?action=register">Register</a>
+                        <a class="nav-link" href="index.php?module=auth&action=register">Register</a>
                     </li>
                 <?php endif; ?>
             </ul>
