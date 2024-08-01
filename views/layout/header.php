@@ -10,7 +10,7 @@
         <a class="navbar-brand" href="index.php">Product Management</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ml-auto">
-                <?php if (isset($_SESSION['user_id'])): ?>
+            <?php if (isset($_SESSION['user_id'])): ?>
                     <li class="nav-item">
                         <a class="nav-link" href="index.php">Home</a>
                     </li>

@@ -7,7 +7,6 @@ class AuthController {
     public function __construct() {
         $this->userModel = new UserModel();
     }
-
     public function handleRequest() {
         $action = $_GET['action'] ?? '';
         
@@ -26,7 +25,6 @@ class AuthController {
                 break;
         }
     }
-
     
 
     public function showLoginForm() {
@@ -37,10 +35,16 @@ class AuthController {
         include 'views/auth/login.php';
     }
 
+
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if ($this->userModel->loginUser()) {
-                header('Location: index.php');
+            $user = $this->userModel->loginUser();
+            if ($user) {
+                if ($user['role'] === 'admin') {
+                    header('Location: index.php?module=user');
+                } else {
+                    header('Location: index.php?module=product');
+                }
                 exit;
             } else {
                 $error = "Invalid username or password";
@@ -50,6 +54,7 @@ class AuthController {
             header('Location: index.php?module=auth');
         }
     }
+    
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $result = $this->userModel->registerUser();

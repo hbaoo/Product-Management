@@ -2,28 +2,38 @@
 require_once 'config/database.php';
 
 class UserModel {
-    private $pdo;
 
-    public function __construct() {
+    public function getAllUsers() {
         global $pdo;
-        $this->pdo = $pdo;
+        $stmt = $pdo->query("SELECT * FROM users");
+        return $stmt->fetchAll();
+    }
+
+    public function getUserById($id) {
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
     }
 
     public function getUserByUsername($username) {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE username = ?");
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
         $stmt->execute([$username]);
         return $stmt->fetch();
     }
 
     public function getUserByEmail($email) {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ?");
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
         return $stmt->fetch();
     }
 
     public function createUser($username, $email, $password, $phone) {
+        global $pdo;
         $hashed_password = md5($password);
-        $stmt = $this->pdo->prepare("INSERT INTO users (username, email, password, phone) VALUES (?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO users (username, email, password, phone) VALUES (?, ?, ?, ?)");
         return $stmt->execute([$username, $email, $hashed_password, $phone]);
     }
 
@@ -34,8 +44,7 @@ class UserModel {
             
             $user = $this->getUserByUsername($username);
             if ($user && $user['password'] === md5($password)) {
-                $_SESSION['user_id'] = $user['id'];
-                return true;
+                return $user;
             }
         }
         return false;
@@ -48,6 +57,7 @@ class UserModel {
             $password = $_POST['password'];
             $repassword = $_POST['repassword'];
             $phone = $_POST['phone'];
+            // $role = $_POST['role'] ?? 'user';
 
             if ($password !== $repassword) {
                 return "Passwords do not match";
@@ -61,7 +71,7 @@ class UserModel {
                 return "Email already exists";
             }
 
-            if ($this->createUser($username, $email, $password, $phone)) {
+            if ($this->createUser($username, $email, $password, $phone /*$role*/)) {
                 $_SESSION['success'] = "Registration successful! Please login.";
                 return true;
             }
@@ -70,6 +80,38 @@ class UserModel {
         }
         return "Invalid request method";
     }
+
+    public function updateUser($id) {
+        global $pdo;
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $username = $_POST['username'];
+            $email = $_POST['email'];
+            $phone = $_POST['phone'];
+            $role = $_POST['role'];
+    
+            $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, phone = ?, role = ? WHERE id = ?");
+            $stmt->execute([$username, $email, $phone, $role, $id]);
+    
+            return true;
+        }
+        return false;
+    }
+
+    public function deleteUser($id) {
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([$id]);
+        $user = $stmt->fetch();
+    
+        if ($user) {
+            $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
+            return $stmt->execute([$id]);
+        } else {
+            return false; 
+        }
+    }
+    
+    
 
     public function logoutUser() {
         session_destroy();

@@ -1,7 +1,7 @@
 <?php include 'views/layout/header.php'; ?>
 
 <h2 class="mb-4">Edit Product</h2>
-<form action="index.php?action=edit&id=<?php echo $product['id']; ?>" method="post" enctype="multipart/form-data">
+<form action="index.php?module=product&action=edit&id=<?php echo $product['id']; ?>" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label for="name">Name:</label>
         <input type="text" class="form-control" name="name" value="<?php echo $product['name']; ?>" required>

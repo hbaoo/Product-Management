@@ -5,11 +5,9 @@ class ProductController {
     private $productModel;
 
     public function __construct() {
-        if (!$_SESSION['user_id']) {
-                header('Location: index.php?module=auth');
-            }
-            
-
+        // if (!$_SESSION['user_id']) {
+        //         header('Location: index.php?module=auth');
+        //     }
         $this->productModel = new ProductModel();
     }
 
@@ -17,6 +15,8 @@ class ProductController {
         $products = $this->productModel->getAllProducts();
         include 'views/products/index.php';
     }
+
+    
 
     public function handleRequest() {
         $action = isset($_GET['action']) ? $_GET['action'] : 'index';
@@ -30,14 +30,14 @@ class ProductController {
                 if ($id) {
                     $this->edit($id);
                 } else {
-                    header('Location: index.php');
+                    header('Location: index.php?module=product');
                 }
                 break;
             case 'delete':
                 if ($id) {
                     $this->delete($id);
                 } else {
-                    header('Location: index.php');
+                    header('Location: index.php?module=product');
                 }
                 break;
             default:
@@ -50,7 +50,7 @@ class ProductController {
     public function create() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($this->productModel->createProduct()) {
-                header('Location: index.php');
+                header('Location: index.php?module=product');
                 exit;
             } else {
                 $error = "Failed to create product";
@@ -62,9 +62,10 @@ class ProductController {
     }
 
     public function edit($id) {
+        $module = 'product';
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($this->productModel->updateProduct($id)) {
-                header('Location: index.php');
+                header('Location: index.php?module=product');
                 exit;
             } else {
                 $error = "Failed to update product";
@@ -79,7 +80,7 @@ class ProductController {
 
     public function delete($id) {
         if ($this->productModel->deleteProduct($id)) {
-            header('Location: index.php');
+            header('Location: index.php?module=product');
             exit;
         }
     }
