@@ -57,7 +57,6 @@ class UserModel {
             $password = $_POST['password'];
             $repassword = $_POST['repassword'];
             $phone = $_POST['phone'];
-            // $role = $_POST['role'] ?? 'user';
 
             if ($password !== $repassword) {
                 return "Passwords do not match";
@@ -88,9 +87,11 @@ class UserModel {
             $email = $_POST['email'];
             $phone = $_POST['phone'];
             $role = $_POST['role'];
+            $can_edit = isset($_POST['can_edit']) ? $_POST['can_edit'] : 0;
+            $can_delete = isset($_POST['can_delete']) ? $_POST['can_delete'] : 0;
     
-            $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, phone = ?, role = ? WHERE id = ?");
-            $stmt->execute([$username, $email, $phone, $role, $id]);
+            $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, phone = ?, role = ?, can_edit = ?, can_delete = ? WHERE id = ?");
+            $stmt->execute([$username, $email, $phone, $role, $can_edit, $can_delete, $id]);
     
             return true;
         }
@@ -111,8 +112,6 @@ class UserModel {
         }
     }
     
-    
-
     public function logoutUser() {
         session_destroy();
     }

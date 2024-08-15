@@ -1,13 +1,16 @@
 <?php
 require_once 'models/ProductModel.php';
+require_once 'models/UserModel.php';
 
 class ProductController {
     private $productModel;
+    private $userModel;
 
     public function __construct() {
-        // if (!$_SESSION['user_id']) {
-        //         header('Location: index.php?module=auth');
-        //     }
+        if (!$_SESSION['user_id']) {
+                header('Location: index.php?module=auth&action=login');
+            }
+        $this->userModel = new UserModel();
         $this->productModel = new ProductModel();
     }
 
@@ -63,26 +66,43 @@ class ProductController {
 
     public function edit($id) {
         $module = 'product';
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if ($this->productModel->updateProduct($id)) {
-                header('Location: index.php?module=product');
-                exit;
+
+        $user = $this->userModel->getUserById($_SESSION['user_id']);
+        if ($user['can_edit']) {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if ($this->productModel->updateProduct($id)) {
+                    header('Location: index.php?module=product');
+                    exit;
+                } else {
+                    $error = "Failed to update product";
+                    $product = $this->productModel->getProductById($id);
+                    include 'views/products/edit.php';
+                }
             } else {
-                $error = "Failed to update product";
                 $product = $this->productModel->getProductById($id);
                 include 'views/products/edit.php';
             }
         } else {
-            $product = $this->productModel->getProductById($id);
-            include 'views/products/edit.php';
+            $error = "You do not have permission to edit this product.";
+            include 'views/404.php'; 
         }
     }
 
     public function delete($id) {
-        if ($this->productModel->deleteProduct($id)) {
-            header('Location: index.php?module=product');
-            exit;
+        $user = $this->userModel->getUserById($_SESSION['user_id']);
+        if ($user['can_delete']) {
+            if ($this->productModel->deleteProduct($id)) {
+                header('Location: index.php?module=product');
+                exit;
+            } else {
+                $error = "Failed to delete product";
+                include 'views/404.php';
+            }
+        } else {
+            $error = "You do not have permission to delete this product.";
+            include 'views/404.php'; 
         }
     }
+    
 }
 ?>

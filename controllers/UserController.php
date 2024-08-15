@@ -67,8 +67,8 @@ class UserController {
 
 
 <!--Yêu cầu: phân quyền
-B1: Quản lý ds user: add, edit, delete ; --
-B2: Phần quyền admin & user: admin thì được ql ds user, user thì ko đc
-B3: Phân quyền từng hành động của user: add - edit - delete. Vd: user1 thì có quyền add sp, ko đc sửa và xóa; vd: user2 thì đc sửa và xóa, ko đc thêm.
-B4: admin có thể tùy chỉnh quyền từng user.
+B1: Quản lý ds user: add, edit, delete ; (Done)
+B2: Phân quyền admin & user: admin thì được ql ds user, user thì ko đc (Done)
+B3: Phân quyền từng hành động của user: add - edit - delete. Vd: user1 thì có quyền add sp, ko đc sửa và xóa; vd: user2 thì đc sửa và xóa, ko đc thêm. (Done)
+B4: admin có thể tùy chỉnh quyền từng user. (Done)
 -->

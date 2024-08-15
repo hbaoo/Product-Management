@@ -15,7 +15,7 @@
                         <a class="nav-link" href="index.php">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?module=auth&action=create">Add New Product</a>
+                        <a class="nav-link" href="index.php?module=product&action=create">Add New Product</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="index.php?module=auth&action=logout">Logout</a>

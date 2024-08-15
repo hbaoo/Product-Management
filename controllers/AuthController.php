@@ -40,6 +40,8 @@ class AuthController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $this->userModel->loginUser();
             if ($user) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
                 if ($user['role'] === 'admin') {
                     header('Location: index.php?module=user');
                 } else {
